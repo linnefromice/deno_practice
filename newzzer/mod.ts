@@ -2,11 +2,11 @@ import { parse, green, bold } from './deps.ts';
 import { displayHelpAndQuit } from './error.ts';
 
 const BANNER = `
-    ${bold("------------")}
-    ${bold(green("Newzzer"))}
-    ${bold("------------")}
-    ${bold(green("Find your quick news byte at your terminal. Powered by News API"))}
-`
+${bold("------------")}
+${bold(green("Newzzer"))}
+${bold("------------")}
+${bold(green("Find your quick news byte at your terminal. Powered by News API"))}
+`;
 
 const displayBanner = (): void => {
     console.clear();

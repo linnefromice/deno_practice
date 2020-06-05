@@ -2,11 +2,15 @@
 import { red, bold, cyan } from "./deps.ts";
 
 const HELP_MESSAGE = `
-    Usage: newzzer [filters]
-    Optional flags:
-        ${bold("-q, --query")}\t\t Find news related to a specific keyword.
-        ${bold("-c, --category")}\t\t Find news in valid category. The valid categories are: business, entertainment, general, health, science, sports, technology.
-        ${bold("--config <API_KEY>")}\t\t Set API Key for news API. The key can be recieved from ${cyan(`https://newsapi.org/register`)}
+Usage: newzzer [filters]
+Optional flags:
+  ${bold("-q, --query")}
+    Find news related to a specific keyword.
+  ${bold("-c, --category")}
+    Find news in valid category.
+    The valid categories are: business, entertainment, general, health, science, sports, technology.
+  ${bold("--config <API_KEY>")}
+    Set API Key for news API. The key can be recieved from ${cyan(`https://newsapi.org/register`)}
 `;
 
 // Shows help text, error message (if present) and exits the program
