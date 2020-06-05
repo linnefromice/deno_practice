@@ -6,6 +6,7 @@
 - api.ts ... logic for communicating to news api
 - type.d.ts ... interface definition
 - deps.ts ... store all our imports from external dependencies
+- error.ts ... help & error handling
 
 ## memo
 
