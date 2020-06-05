@@ -2,13 +2,16 @@ import {
     parse,
     green,
     bold,
+    magenta,
+    cyan,
     Args,
     existsSync,
     writeJsonSync,
     readJsonSync,
 } from "./deps.ts";
 import { displayHelpAndQuit } from './error.ts';
-import { IConfigFile } from "./type.d.ts";
+import { IConfigFile, IArticle } from "./type.d.ts";
+import Api from "./api.ts";
 
 const setApiKey = (parsedArgs: Args): void => {
     // Get home directory address
@@ -68,6 +71,47 @@ const displayBanner = (): void => {
     console.log(BANNER);
 }
 
+const displayArticles = (news: IArticle[]): void => {
+    if (news.length === 0) {
+        console.log(magenta(`Uh Oh! Looks like we cannot find any news.`));
+    }
+    news.forEach((article: IArticle, i: number) => {
+        console.log(bold(magenta(`  ${i+1}  ${article.title}`)));
+        if (article.description) console.log(`    ${article.description}`);
+        if (article.url) console.log(cyan(`${bold(`    More info:`)} ${article.url}`));
+        console.log(`\n`);
+    });
+}
+
+const invalidCategory = (category?: string): boolean => {
+    if (category === undefined) return true;
+    const validCategories: Set<string> = new Set([
+        "business",
+        "entertainment",
+        "general",
+        "health",
+        "science",
+        "sports",
+        "technology",
+    ]);
+    return !validCategories.has(category);
+}
+
+const showFlags = (parsedArgs: Args): void => {
+    let flagToName: Map<string, string> = new Map([
+        ["q", "query"],
+        ["c", "category"],
+    ]);
+    let flagsInfo: string[] = [];
+    Object.keys(parsedArgs).forEach((arg) => {
+        if (arg !== '_') {
+            let argName = flagToName.has(arg) ? flagToName.get(arg) : arg;
+            flagsInfo.push(`${green(`${argName}: `)}${parsedArgs[arg]}`);
+        }
+    });
+    console.log(`Getting news by-   ${flagsInfo.join("\t")}\n`);
+}
+
 // main logic
 if (import.meta.main) {
     const { args } = Deno;
@@ -77,8 +121,36 @@ if (import.meta.main) {
     if (parsedArgs.config) setApiKey(parsedArgs);
     let apiKey: string = getApiKey();
     console.log(`Found API key: ${apiKey}`);
+    const apiClient: Api = new Api(apiKey);
+    // Show flags passed as inputs if not config and other flag is set
+    if (
+        parsedArgs.config === undefined
+        && args.length !== 0
+        && !parsedArgs.help
+        && !parsedArgs.h
+    ) { showFlags(parsedArgs); }
+    // Check if all flags are valid
+    if (parsedArgs.category) {
+        let error = invalidCategory(parsedArgs.category);
+        if (error) displayHelpAndQuit("Invalid category value found");
+    }
+
     if (args.length === 0 || parsedArgs.h || parsedArgs.help) {
         displayHelpAndQuit();
+    } else if (
+        parsedArgs.c
+        || parsedArgs.category
+        || parsedArgs.q
+        || parsedArgs.query
+    ) {
+        let category = parsedArgs.category || parsedArgs.c;
+        let query = parsedArgs.query || parsedArgs.q;
+        let newsResponse = await apiClient.getNews(category, query);
+        if (typeof newsResponse === "object") {
+            displayArticles(newsResponse);
+        } else {
+            displayHelpAndQuit(newsResponse);
+        }
     } else {
         displayHelpAndQuit("Invalid argument");
     }

@@ -14,6 +14,8 @@
   - deno run --allow-read --allow-write --allow-env mod.ts --config "API_KEY_HERE"
 - get API_KEY from .newzzer.json
   - deno run --allow-read --allow-write --allow-env mod.ts
+- execute API
+  - deno run --allow-net --allow-read --allow-write --allow-env mod.ts --category technology
 
 ## memo
 
