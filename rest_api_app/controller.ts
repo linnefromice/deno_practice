@@ -33,3 +33,10 @@ let movies: Array<Movie> = [
         rating: 9
     }
 ];
+
+// api
+const getMovies = ({ response }: { response: any}) => {
+    response.body = movies;
+}
+
+export { getMovies };
