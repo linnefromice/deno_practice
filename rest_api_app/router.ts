@@ -1,13 +1,15 @@
 import { Router } from "https://deno.land/x/oak/mod.ts";
 import {
     getMovies,
-    getMovie
+    getMovie,
+    createMovie,
 } from './controller.ts';
 
 const router = new Router();
 
 router
     .get("/movies", getMovies)
-    .get("/movie/:id", getMovie);
+    .get("/movie/:id", getMovie)
+    .post("/movies", createMovie);
 
 export default router;

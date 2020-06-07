@@ -53,5 +53,18 @@ const getMovie = ({ params, response } : {
         response.body = { message: "404 Not found" };
     }
 };
+const createMovie = async ({
+    request,
+    response,
+} : {
+    request: any,
+    response: any,
+}) => {
+    const body = await request.body();
+    const movie: Movie = body.value;
+    movies.push(movie);
+    response.body = { success: true, data: movie };
+    response.status = 201;
+};
 
-export { getMovies, getMovie };
+export { getMovies, getMovie, createMovie };
