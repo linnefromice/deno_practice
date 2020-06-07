@@ -67,4 +67,31 @@ const createMovie = async ({
     response.status = 201;
 };
 
-export { getMovies, getMovie, createMovie };
+const updateMovie = async ({
+    params,
+    request,
+    response,
+} : {
+    params: { id: string },
+    request: any,
+    response: any,
+}) => {
+    const movie = movies.filter((movie) => movie.id.toString() == params.id)[0];
+    if (movie) {
+        const body = await request.body();
+        movie.title = body.value.title;
+        movie.rating = body.value.rating;
+        response.body = {
+            success: true,
+            data: movies,
+        };
+    } else {
+        response.status = 404;
+        response.body = {
+            success: false,
+            message: "Movie not found",
+        };
+    }
+};
+
+export { getMovies, getMovie, createMovie, updateMovie };
