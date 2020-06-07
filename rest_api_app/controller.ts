@@ -35,8 +35,23 @@ let movies: Array<Movie> = [
 ];
 
 // api
-const getMovies = ({ response }: { response: any}) => {
+const getMovies = ({ response }: { response: any }) => {
     response.body = movies;
-}
+};
 
-export { getMovies };
+const getMovie = ({ params, response } : {
+    params: { id: string },
+    response: any,
+}) => {
+    const movie = movies.filter((movie) => movie.id.toString() == params.id)[0];
+    console.log(movie);
+    if (movie) {
+        response.status = 200;
+        response.body = movie;
+    } else {
+        response.status = 404;
+        response.body = { message: "404 Not found" };
+    }
+};
+
+export { getMovies, getMovie };
