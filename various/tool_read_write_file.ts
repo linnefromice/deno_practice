@@ -1,4 +1,7 @@
 // deno run --unstable --allow-read tool_deno.ts
+// sample format of reading file
+// {"id":"1","sql":"INSERT INTO user (`1`, `linnefromice`, `20000420`)"}
+// {"id":"2","sql":"SELECT * FROM user"}
 
 import { readFileStrSync } from "https://deno.land/std/fs/mod.ts"
 
