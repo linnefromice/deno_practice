@@ -63,11 +63,15 @@ function countFiles(filepath:string, result:Map<string, Map<string, number>>) {
 }
 
 function writeFileEachCommand(command:string, innerMap:Map<string, number>) {
-    writeFileStrSync(`./summary.csv`, "");
     const encoder = new TextEncoder();
     innerMap.forEach((value, key, map) => {
-        Deno.writeFileSync(`./summary.csv`, encoder.encode(`${command},${key},${value}\n`), {append: true});
-    })
+        if (key.includes(".")) {
+            const [schema, table] = key.split(".")
+            Deno.writeFileSync(`./summary.csv`, encoder.encode(`${command},${schema},${table},${value}\n`), {append: true});
+        } else {
+            Deno.writeFileSync(`./summary.csv`, encoder.encode(`${command},,${key},${value}\n`), {append: true});
+        }
+
 }
 
 const main = () => {
@@ -78,8 +82,10 @@ const main = () => {
     result.set("DELETE", new Map<string, number>())
     
     // output
+    writeFileStrSync(`./summary.csv`, "");
     const encoder = new TextEncoder();
-    ["SELECT", "INSERT", "UPDATE", "DELETE"].forEach(command => {
+    Deno.writeFileSync(`./summary.csv`, encoder.encode("COMMAND,SCHEMA,TABLE,SUM\n"), {append: true});
+    ["SELECT", "INSERT", "UPDATE", "DELETE"].forEach((command:string) => {
         const innerMap = result.get(command) || new Map<string, number>()
         writeFileEachCommand(command, innerMap);
     });
