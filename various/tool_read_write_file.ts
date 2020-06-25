@@ -3,7 +3,7 @@
 // {"id":"1","sql":"INSERT INTO user (`1`, `linnefromice`, `20000420`)"}
 // {"id":"2","sql":"SELECT * FROM user"}
 
-import { readFileStrSync } from "https://deno.land/std/fs/mod.ts"
+import { readFileStrSync, writeFileStrSync } from "https://deno.land/std/fs/mod.ts"
 
 function addCounter(tableName:string, innerMap:Map<string, number>) {
     const count = innerMap.get(tableName)
@@ -62,16 +62,27 @@ function countFiles(filepath:string, result:Map<string, Map<string, number>>) {
     })
 }
 
+function writeFileEachCommand(command:string, innerMap:Map<string, number>) {
+    writeFileStrSync(`./summary.csv`, "");
+    const encoder = new TextEncoder();
+    innerMap.forEach((value, key, map) => {
+        Deno.writeFileSync(`./summary.csv`, encoder.encode(`${command},${key},${value}\n`), {append: true});
+    })
+}
+
 const main = () => {
     const result = new Map<string, Map<string, number>>()
     result.set("SELECT", new Map<string, number>())
     result.set("INSERT", new Map<string, number>())
     result.set("UPDATE", new Map<string, number>())
     result.set("DELETE", new Map<string, number>())
-    countFiles("./sample.log", result)
-    console.log(result)
-    // writeFileStrSync("summary_executed_sql_in_test.txt", JSON.stringify(result))
-    // writeJsonSync("summary_executed_sql_in_test.json", result)
+    
+    // output
+    const encoder = new TextEncoder();
+    ["SELECT", "INSERT", "UPDATE", "DELETE"].forEach(command => {
+        const innerMap = result.get(command) || new Map<string, number>()
+        writeFileEachCommand(command, innerMap);
+    });
 }
 
 main()
