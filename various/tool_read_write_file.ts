@@ -37,6 +37,7 @@ function countDelete(sql:string, map:Map<string, number>) {
     // DEBUG: console.log(`${words[0]} / ${words[2]}`)
 }
 
+// 指定されたパスのファイルの集計をする
 function countFiles(filepath:string, result:Map<string, Map<string, number>>) {
     const datas = readFileStrSync(filepath, { encoding: "utf8" });
     const dataArray = datas.split(/\r\n|\r|\n/)
@@ -62,6 +63,7 @@ function countFiles(filepath:string, result:Map<string, Map<string, number>>) {
     })
 }
 
+// コマンドごとにサマリ結果をファイル出力する
 function writeFileEachCommand(command:string, innerMap:Map<string, number>) {
     const encoder = new TextEncoder();
     innerMap.forEach((value, key, map) => {
@@ -70,13 +72,13 @@ function writeFileEachCommand(command:string, innerMap:Map<string, number>) {
             Deno.writeFileSync(`./summary.csv`, encoder.encode(`${command},${schema},${table},${value}\n`), {append: true});
         } else {
             Deno.writeFileSync(`./summary.csv`, encoder.encode(`${command},,${key},${value}\n`), {append: true});
-        }
-
+        } // EX. INSERT,main_schema,user,10
+    }
 }
 
 const main = () => {
-    const result = new Map<string, Map<string, number>>()
-    result.set("SELECT", new Map<string, number>())
+    const result = new Map<string, Map<string, number>>() // {"SELECT":{}, "INSERT":{} ... }
+    result.set("SELECT", new Map<string, number>()) // {"user"": N, ...}
     result.set("INSERT", new Map<string, number>())
     result.set("UPDATE", new Map<string, number>())
     result.set("DELETE", new Map<string, number>())
